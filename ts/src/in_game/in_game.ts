@@ -114,32 +114,32 @@ class InGameController extends AppWindow {
     if (!el) return;
 
     if (players.length === 0) {
-      el.innerHTML = '<div class="muted" style="padding:8px 4px">Нет данных</div>';
+      el.innerHTML = '<div style="padding:8px 10px;font-size:11px;opacity:.4">Нет данных</div>';
       return;
     }
 
     el.innerHTML = players.map(p => {
       const enc        = this._history.getLastEncounter(p.battleTag || p.playerName);
       const metBefore  = enc !== null;
-      const displayName = p.playerName || p.battleTag || '???';
-      const rc         = roleClass(p.heroRole);
-      const kdaStr     = `${p.kills}/${p.deaths}/${p.assists}`;
+      // Primary label: player name/tag, fallback to hero name
+      const label      = p.playerName || p.battleTag || heroDisplay(p.heroName) || '???';
       const icon       = getHeroIcon(p.heroName);
+      const metTip     = metBefore
+        ? ` title="★ Встречались ${new Date(enc!.lastSeen).toLocaleDateString('ru-RU')} · ${enc!.mapName}"`
+        : '';
+
+      const portrait = icon
+        ? `<img src="${icon}" alt="" onerror="this.style.display='none';this.parentElement.querySelector('.hero-portrait-placeholder').style.display=''">`
+        : '';
+      const placeholder = `<span class="hero-portrait-placeholder" ${icon ? 'style="display:none"' : ''}>?</span>`;
 
       return `
-        <div class="roster-entry ${p.isLocal ? 'is-local' : ''}">
-          <div class="roster-hero">
-            ${icon
-              ? `<img class="hero-icon-sm" src="${icon}" alt="" onerror="this.style.display='none'">`
-              : `<span class="hero-dot ${rc}"></span>`
-            }
-            <span class="roster-hero-name ${rc}">${heroDisplay(p.heroName)}</span>
+        <div class="roster-entry ${p.isLocal ? 'is-local' : ''}"${metTip}>
+          <div class="hero-portrait">${portrait}${placeholder}</div>
+          <div class="entry-body">
+            <span class="entry-name">${label}</span>
+            <div class="entry-bar"></div>
           </div>
-          <div class="roster-player">
-            <span class="roster-btag ${p.isTeammate || p.isLocal ? 'ally' : 'enemy'}">${displayName}</span>
-            ${metBefore ? `<span class="met-badge" title="Встречались ${new Date(enc!.lastSeen).toLocaleDateString('ru-RU')} на ${enc!.mapName}">★</span>` : ''}
-          </div>
-          <div class="roster-kda muted">${kdaStr}</div>
         </div>`;
     }).join('');
   }
