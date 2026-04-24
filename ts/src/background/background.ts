@@ -136,8 +136,9 @@ class BackgroundController {
     const info = await OWGames.getRunningGameInfo();
     if (info && info.isRunning && info.classId === kOWClassId) {
       this._state.gameRunning = true;
-      this._windows[kWindowNames.desktop].close();
-      this._windows[kWindowNames.inGame].restore();
+      // Game already running on app launch — keep desktop open, overlay stays hidden until match starts
+      this._windows[kWindowNames.inGame].close();
+      this._windows[kWindowNames.desktop].restore();
       this.startGep();
     } else {
       this._windows[kWindowNames.desktop].restore();
@@ -163,8 +164,8 @@ class BackgroundController {
     if (!info || info.classId !== kOWClassId) return;
     console.log('[VW] Game started');
     this._state.gameRunning = true;
-    this._windows[kWindowNames.desktop].close();
-    this._windows[kWindowNames.inGame].restore();
+    // Keep desktop open, overlay will appear only when a match begins
+    this._windows[kWindowNames.inGame].close();
     this.startGep();
     this.notifyListeners();
   }
@@ -172,7 +173,8 @@ class BackgroundController {
   private onGameEnded(info: RunningGameInfo): void {
     if (!info || info.classId !== kOWClassId) return;
     console.log('[VW] Game ended');
-    this._state.gameRunning = false;
+    this._state.gameRunning  = false;
+    this._state.matchActive  = false;
     this.stopGep();
     this._windows[kWindowNames.inGame].close();
     this._windows[kWindowNames.desktop].restore();
@@ -327,11 +329,17 @@ class BackgroundController {
     this._state.localDamage    = 0;
     this._state.localHealed    = 0;
     this._state.roster         = [];
+    // Open overlay only now
+    this._windows[kWindowNames.desktop].close();
+    this._windows[kWindowNames.inGame].restore();
   }
 
   private onMatchEnd(): void {
     console.log('[VW] Match ended');
     this._state.matchActive = false;
+    // Close overlay, return to launcher after match ends
+    this._windows[kWindowNames.inGame].close();
+    this._windows[kWindowNames.desktop].restore();
     // Outcome is delivered via match_outcome info update — saveMatchRecord called there
   }
 

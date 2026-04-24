@@ -2,7 +2,8 @@ import { AppWindow }               from '../AppWindow';
 import { kWindowNames }             from '../consts';
 import { StatsService }             from '../services/stats-service';
 import { ErrorService }             from '../services/error-service';
-import { HEROES, getHeroesByRole, getDifficultyLabel } from '../data/heroes';
+import { HEROES, getHeroesByRole, getDifficultyLabel, getHeroIcon } from '../data/heroes';
+import { getMapImageByName }                                          from '../data/maps';
 
 class DesktopController extends AppWindow {
   private _stats  = StatsService.instance();
@@ -14,6 +15,7 @@ class DesktopController extends AppWindow {
     this.initHeroGuide();
     this.loadStats();
     this.initGuideTab();
+    this.initLaunchButton();
 
     // Refresh data whenever window gets focus
     window.addEventListener('focus', () => this.loadStats());
@@ -22,15 +24,21 @@ class DesktopController extends AppWindow {
   // ─── Tabs ─────────────────────────────────────────────────────────────
 
   private initTabs(): void {
-    document.querySelectorAll<HTMLButtonElement>('.tab-btn').forEach(btn => {
+    document.querySelectorAll<HTMLButtonElement>('.nav-btn[data-tab]').forEach(btn => {
       btn.addEventListener('click', () => {
         const tabId = btn.dataset.tab;
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.nav-btn[data-tab]').forEach(b => b.classList.remove('active'));
         document.querySelectorAll('.tab-content').forEach(s => s.classList.remove('active'));
         btn.classList.add('active');
         document.getElementById(`tab-${tabId}`)?.classList.add('active');
         if (tabId === 'stats') this.renderStats();
       });
+    });
+  }
+
+  private initLaunchButton(): void {
+    document.getElementById('launch-game-btn')?.addEventListener('click', () => {
+      (overwolf.utils as any).openUrl('battlenet://OVRW');
     });
   }
 
@@ -113,12 +121,14 @@ class DesktopController extends AppWindow {
         matchesEl.innerHTML = data.recentMatches.map(m => {
           const date    = new Date(m.date).toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit' });
           const hero    = HEROES.find(h => h.name === m.hero);
+          const heroIcon = getHeroIcon(m.hero);
+          const mapImg   = getMapImageByName(m.mapName || '');
           const outcome = m.outcome === 'victory' ? 'win' : m.outcome === 'defeat' ? 'loss' : 'unknown';
           return `
             <div class="match-row ${outcome}">
-              <span class="match-outcome">${m.outcome === 'victory' ? 'П' : m.outcome === 'defeat' ? 'П' : '?'}</span>
-              <span class="match-map">${m.mapName || '—'}</span>
-              <span class="match-hero">${(hero?.displayName ?? m.hero) || '—'}</span>
+              <span class="match-outcome">${m.outcome === 'victory' ? 'В' : m.outcome === 'defeat' ? 'П' : '?'}</span>
+              <span class="match-map">${mapImg ? `<img class="map-thumb-sm" src="${mapImg}" alt="" onerror="this.style.display='none'">` : ''}${m.mapName || '—'}</span>
+              <span class="match-hero">${heroIcon ? `<img class="chip-icon" src="${heroIcon}" alt="" onerror="this.style.display='none'">` : ''}${(hero?.displayName ?? m.hero) || '—'}</span>
               <span class="match-kda">${m.kills}/${m.deaths}/${m.assists}</span>
               <span class="match-date muted">${date}</span>
             </div>`;
@@ -149,9 +159,12 @@ class DesktopController extends AppWindow {
       ? HEROES
       : HEROES.filter(h => h.role === role);
 
-    grid.innerHTML = list.map(h => `
+    grid.innerHTML = list.map(h => {
+      const icon = getHeroIcon(h.name);
+      return `
       <div class="hero-card">
         <div class="hero-card-header">
+          ${icon ? `<img class="hero-card-icon" src="${icon}" alt="${h.displayName}" onerror="this.style.display='none'">` : ''}
           <span class="hero-card-name">${h.displayName}</span>
           <span class="role-badge ${h.role.toLowerCase()}">${h.role}</span>
           <span class="difficulty-badge diff-${h.difficulty}">${getDifficultyLabel(h.difficulty)}</span>
@@ -170,7 +183,8 @@ class DesktopController extends AppWindow {
           </div>
         </div>
       </div>
-    `).join('');
+    `;
+    }).join('');
   }
 
   private formatHeroName(name: string): string {

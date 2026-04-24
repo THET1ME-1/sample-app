@@ -31,7 +31,10 @@ module.exports = env => ({
     plugins: [
         new CleanWebpackPlugin,
         new CopyPlugin({
-            patterns: [ { from: "public", to: "./" } ],
+            patterns: [
+                { from: "public", to: "./" },
+                { from: "assets", to: "./assets" }
+            ],
         }),
         new HtmlWebpackPlugin({
             template: './src/background/background.html',

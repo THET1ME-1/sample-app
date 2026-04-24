@@ -10,22 +10,93 @@
 }
 
 :root {
-  --bg-deep:    #0a1628;
-  --bg-card:    #122040;
-  --bg-panel:   #0d1e36;
-  --accent:     #00c8e0;
-  --accent-dim: #008ca0;
-  --orange:     #f77f00;
-  --green:      #00e5a0;
-  --red:        #ff4757;
-  --text:       #dce8f5;
-  --text-muted: #8ba5c9;
-  --tank-color: #3b9eff;
-  --dps-color:  #ff6b81;
-  --supp-color: #ffd32a;
+  --bg-deep:    #120F09;
+  --bg-sidebar: #0d0b07;
+  --bg-panel:   #272C48;
+  --bg-card:    #1c1408;
+  --accent:     #DD8606;
+  --accent-dim: #C25007;
+  --dark-red:   #943901;
+  --dark-brown: #411700;
+  --text:       #E1E5E8;
+  --text-muted: #8a9099;
+  --white:      #FFF;
+  --green:      #6bbf85;
+  --red:        #b84040;
+  --tank-color: #6ea8d4;
+  --dps-color:  #C25007;
+  --supp-color: #DD8606;
   --radius:     6px;
-  --header-h:   40px;
+  --header-h:   34px;
+  --sidebar-w:  170px;
 }
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  font-family: 'Roboto', sans-serif;
+  font-size: 13px;
+  color: var(--text);
+  background: var(--bg-deep);
+  cursor: default;
+  user-select: none;
+}
+
+h1, h2, h3 { margin: 0; }
+
+button {
+  padding: 0;
+  border: none;
+  cursor: pointer;
+  background: none;
+}
+button:focus { outline: none; }
+
+.muted { color: var(--text-muted); }
+
+.section-title {
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 16px 0 8px;
+}
+
+/* Role colours */
+.tank  { color: var(--tank-color); }
+.dps   { color: var(--dps-color); }
+.supp  { color: var(--supp-color); }
+
+.role-badge {
+  display: inline-block;
+  padding: 1px 6px;
+  border-radius: 3px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+}
+.role-badge.tank { background: rgba(110,168,212,.2); color: var(--tank-color); }
+.role-badge.dps  { background: rgba(194,80,7,.22);   color: var(--dps-color); }
+.role-badge.supp { background: rgba(221,134,6,.18);  color: var(--supp-color); }
+
+.btn-secondary {
+  padding: 6px 14px;
+  border-radius: var(--radius);
+  font-size: 12px; font-weight: 600;
+  background: rgba(221,134,6,.1);
+  border: 1px solid rgba(221,134,6,.28);
+  color: var(--accent);
+  transition: all .15s;
+}
+.btn-secondary:hover {
+  background: rgba(221,134,6,.2);
+  border-color: var(--accent);
+}
+
 
 html, body {
   width: 100%;

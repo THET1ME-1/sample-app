@@ -255,6 +255,31 @@ export const HEROES: HeroInfo[] = [
     counteredBy: ['TRACER', 'GENJI', 'WINSTON', 'FLANKERS'],
     tips: ['Discord Orb на танка для разрушения брони', 'Harmony Orb самому уязвимому союзнику', 'Transcendence контрит AOE ульты']
   },
+  // ─── NEW HEROES ────────────────────────────────────────────────────────────
+  {
+    name: 'JUNO', displayName: 'Juno', role: 'Support', difficulty: 2,
+    counters: ['PHARAH', 'ECHO', 'AIR TARGETS', 'GROUPED ENEMIES'],
+    counteredBy: ['TRACER', 'WINSTON', 'SOMBRA', 'DVA'],
+    tips: ['Glide Boost для быстрого перемещения', 'Hyper Ring ускоряет союзников', 'Pulsar Torpedoes автонаводятся на врагов']
+  },
+  {
+    name: 'HAZARD', displayName: 'Hazard', role: 'Tank', difficulty: 2,
+    counters: ['TRACER', 'GENJI', 'DIVE COMP', 'FLANKERS'],
+    counteredBy: ['PHARAH', 'SOMBRA', 'BASTION', 'SOLDIER: 76'],
+    tips: ['Spike Guard наказывает ближний бой', 'Overclock усиливает все способности', 'Wall of Thorns блокирует проходы']
+  },
+  {
+    name: 'FREJA', displayName: 'Freja', role: 'DPS', difficulty: 2,
+    counters: ['ANA', 'WIDOWMAKER', 'SUPPORTS', 'DISTANT TARGETS'],
+    counteredBy: ['WINSTON', 'DVA', 'TRACER', 'BRIGITTE'],
+    tips: ['Используй крюк для быстрой смены позиции', 'Volley — мощный бёрст на средней дистанции', 'Bound — резкий уход от фокуса']
+  },
+  {
+    name: 'MARVEL', displayName: 'Marvel', role: 'DPS', difficulty: 2,
+    counters: ['REINHARDT', 'ORISA', 'BASTION', 'BUNKER COMP'],
+    counteredBy: ['TRACER', 'WINSTON', 'DVA', 'GENJI'],
+    tips: ['Высокий урон при дистанционной игре', 'Используй мобильность для выхода из-под огня']
+  },
 ];
 
 export const HERO_MAP: Record<string, HeroInfo> = {};
@@ -281,4 +306,66 @@ export function getHeroesByRole(role: HeroRole): HeroInfo[] {
 
 export function getDifficultyLabel(d: HeroDifficulty): string {
   return ['', 'Легко', 'Средне', 'Сложно'][d];
+}
+
+// ─── Hero icon paths (relative to dist/) ─────────────────────────────────────
+export const HERO_ICONS: Record<string, string> = {
+  // Tanks
+  'DVA':           'assets/icon-heroes/Tank/Icon-D.png',
+  'ORISA':         'assets/icon-heroes/Tank/Icon-Orisa.png',
+  'REINHARDT':     'assets/icon-heroes/Tank/Icon-Reinhardt.png',
+  'ROADHOG':       'assets/icon-heroes/Tank/Icon-Roadhog.png',
+  'SIGMA':         'assets/icon-heroes/Tank/Icon-Sigma.png',
+  'WINSTON':       'assets/icon-heroes/Tank/Icon-Winston.png',
+  'WRECKING BALL': 'assets/icon-heroes/Tank/Icon-Wrecking Ball.png',
+  'ZARYA':         'assets/icon-heroes/Tank/Icon-Zarya.png',
+  'DOOMFIST':      'assets/icon-heroes/Tank/Icon-Doomfist.png',
+  'JUNKER QUEEN':  'assets/icon-heroes/Tank/Icon-Junker Queen.png',
+  'RAMATTRA':      'assets/icon-heroes/Tank/Icon-Ramattra.png',
+  'MAUGA':         'assets/icon-heroes/Tank/Icon-Mauga.png',
+  'HAZARD':        'assets/icon-heroes/Tank/Icon-Hazard.png',
+  'DOMINA':        'assets/icon-heroes/Tank/Icon-Domina.png',
+  // Damage
+  'ASHE':          'assets/icon-heroes/Damage/Icon-Ashe.png',
+  'BASTION':       'assets/icon-heroes/Damage/Icon-Bastion.png',
+  'CASSIDY':       'assets/icon-heroes/Damage/Icon-Cassidy.png',
+  'ECHO':          'assets/icon-heroes/Damage/Icon-Echo.png',
+  'GENJI':         'assets/icon-heroes/Damage/Icon-Genji.png',
+  'HANZO':         'assets/icon-heroes/Damage/Icon-Hanzo.png',
+  'JUNKRAT':       'assets/icon-heroes/Damage/Icon-Junkrat.png',
+  'MEI':           'assets/icon-heroes/Damage/Icon-Mei.png',
+  'PHARAH':        'assets/icon-heroes/Damage/Icon-Pharah.png',
+  'REAPER':        'assets/icon-heroes/Damage/Icon-Reaper.png',
+  'SOJOURN':       'assets/icon-heroes/Damage/Icon-Sojourn.png',
+  'SOLDIER: 76':   'assets/icon-heroes/Damage/Icon-Soldier 76.png',
+  'SOMBRA':        'assets/icon-heroes/Damage/Icon-Sombra.png',
+  'SYMMETRA':      'assets/icon-heroes/Damage/Icon-Symmetra.png',
+  'TORBJÖRN':      'assets/icon-heroes/Damage/Icon-Torbjörn.png',
+  'TRACER':        'assets/icon-heroes/Damage/Icon-Tracer.png',
+  'VENTURE':       'assets/icon-heroes/Damage/Icon-Venture.png',
+  'WIDOWMAKER':    'assets/icon-heroes/Damage/Icon-Widowmaker.png',
+  'FREJA':         'assets/icon-heroes/Damage/Icon-Freja.png',
+  'ANRAN':         'assets/icon-heroes/Damage/Icon-Anran.png',
+  'EMRE':          'assets/icon-heroes/Damage/Icon-Emre.png',
+  'SIERRA':        'assets/icon-heroes/Damage/Icon-Sierra.png',
+  'VENDETTA':      'assets/icon-heroes/Damage/Icon-Vendetta.png',
+  // Support
+  'ANA':           'assets/icon-heroes/Support/Icon-Ana.png',
+  'BAPTISTE':      'assets/icon-heroes/Support/Icon-Baptiste.png',
+  'BRIGITTE':      'assets/icon-heroes/Support/Icon-Brigitte.png',
+  'ILLARI':        'assets/icon-heroes/Support/Icon-Illari.png',
+  'JUNO':          'assets/icon-heroes/Support/Icon-Juno.png',
+  'KIRIKO':        'assets/icon-heroes/Support/Icon-kiriko.png',
+  'LIFEWEAVER':    'assets/icon-heroes/Support/Icon-Lifeweaver.png',
+  'LUCIO':         'assets/icon-heroes/Support/Icon-Lúcio.png',
+  'MERCY':         'assets/icon-heroes/Support/Icon-Mercy.png',
+  'MOIRA':         'assets/icon-heroes/Support/Icon-Moira.png',
+  'ZENYATTA':      'assets/icon-heroes/Support/Icon-Zenyatta.png',
+  'JETPACK CAT':   'assets/icon-heroes/Support/Icon-Jetpack Cat.png',
+  'MIZUKI':        'assets/icon-heroes/Support/Icon-Mizuki.png',
+  'WUYANG':        'assets/icon-heroes/Support/Icon-Wuyang.png',
+};
+
+export function getHeroIcon(heroName: string): string {
+  return HERO_ICONS[heroName?.toUpperCase()] ?? '';
 }

@@ -54,3 +54,56 @@ export function getMapType(mapId: string): string {
 export function getGoodHeroesForMap(mapId: string): string[] {
   return OW_MAPS[mapId]?.goodHeroes ?? [];
 }
+
+// ─── Map preview images (relative to dist/) ──────────────────────────────────
+const MAP_IMAGES: Record<string, string> = {
+  '3314': 'assets/maps/Antarctic Peninsula.png',
+  '2018': 'assets/maps/Busan.png',
+  '1645': 'assets/maps/Ilios.png',
+  '1634': 'assets/maps/Lijiang Tower.png',
+  '1719': 'assets/maps/Lijiang Tower.png',
+  '1207': 'assets/maps/Nepal.png',
+  '1694': 'assets/maps/Oasis.png',
+  '3776': 'assets/maps/Samoa.png',
+  '2087': 'assets/maps/Circuit Royal.png',
+  '707':  'assets/maps/Dorado.png',
+  '2628': 'assets/maps/Havana.png',
+  '1878': 'assets/maps/Junkertown.png',
+  '2161': 'assets/maps/Rialto.png',
+  '1467': 'assets/maps/Route 66.png',
+  '3205': 'assets/maps/Shambali Monastery.png',
+  '388':  'assets/maps/Watchpoint Gibraltar.png',
+  '1886': 'assets/maps/Blizzard World.png',
+  '2651': 'assets/maps/Blizzard World.png',
+  '1677': 'assets/maps/Eichenwalde.png',
+  '2036': 'assets/maps/Eichenwalde.png',
+  '687':  'assets/maps/Hollywood.png',
+  '1707': 'assets/maps/Hollywood.png',
+  '212':  "assets/maps/King's Row.png",
+  '1713': "assets/maps/King's Row.png",
+  '2892': 'assets/maps/Midtown.png',
+  '468':  'assets/maps/Numbani.png',
+  '2360': 'assets/maps/Paraíso.png',
+  '2868': 'assets/maps/Colosseo.png',
+  '3411': 'assets/maps/Esperança.png',
+  '2795': 'assets/maps/New Queen Street.png',
+  '3762': 'assets/maps/Runasapi.png',
+  '3603': 'assets/maps/New Junk City.png',
+  '3390': 'assets/maps/Suravasa.png',
+  '4448': 'assets/maps/Aatlis.png',
+};
+
+// Name-based lookup for stats tab (match history shows map names, not IDs)
+const MAP_IMAGES_BY_NAME: Record<string, string> = {};
+for (const [, info] of Object.entries(OW_MAPS)) {
+  const img = MAP_IMAGES[info.id];
+  if (img) MAP_IMAGES_BY_NAME[info.name.toLowerCase()] = img;
+}
+
+export function getMapImage(mapId: string): string {
+  return MAP_IMAGES[mapId] ?? '';
+}
+
+export function getMapImageByName(mapName: string): string {
+  return MAP_IMAGES_BY_NAME[mapName?.toLowerCase()] ?? '';
+}

@@ -7,8 +7,401 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Roboto:wght@400;500;700&display=swap"/>
 <style>
-/* ── Reset & Vars ─────────────────────────────────────────────────────── */
 *,*:before,*:after{box-sizing:border-box;margin:0;padding:0;font-family:inherit;font-size:inherit;font-weight:inherit}
+:root{
+  --bg-deep:#120F09;--bg-sidebar:#0d0b07;--bg-panel:#272C48;--bg-card:#1c1408;
+  --accent:#DD8606;--accent-dim:#C25007;--dark-red:#943901;--dark-brown:#411700;
+  --text:#E1E5E8;--text-muted:#8a9099;--white:#FFF;
+  --green:#6bbf85;--red:#b84040;
+  --tank:#6ea8d4;--dps:#C25007;--supp:#DD8606;
+  --radius:6px;--header-h:34px;--sidebar-w:170px;
+}
+html,body{font-family:'Roboto',sans-serif;font-size:13px;color:var(--text);background:#1a1005;min-height:100vh;padding:30px 20px}
+h2,h3{margin:0}
+.muted{color:var(--text-muted)}
+button{border:none;cursor:pointer;background:none;padding:0}
+button:focus{outline:none}
+
+.page-title{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:22px;color:var(--accent);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px}
+.page-sub{color:var(--text-muted);margin-bottom:32px;font-size:12px}
+.previews{display:flex;flex-wrap:wrap;gap:32px;align-items:flex-start}
+
+/* Window shells */
+.window{border-radius:8px;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,.7);border:1px solid rgba(221,134,6,.2)}
+.window-desktop{width:900px;height:600px;display:flex;flex-direction:column;background:var(--bg-deep)}
+.window-ingame{width:420px;height:640px;display:flex;flex-direction:column;background:rgba(18,15,9,.97)}
+
+/* Title bar */
+.title-bar{display:flex;align-items:center;height:var(--header-h);min-height:var(--header-h);padding:0 8px 0 14px;background:var(--bg-sidebar);border-bottom:1px solid rgba(221,134,6,.12);flex-shrink:0;cursor:grab}
+.title-bar-text{font-family:'Rajdhani',sans-serif;font-weight:600;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:rgba(221,134,6,.45);flex:1}
+.window-controls-group{display:flex;align-items:center;gap:3px;margin-left:auto;flex-shrink:0}
+.window-control{width:22px;height:22px;border-radius:4px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);font-size:10px;color:var(--text-muted);display:flex;align-items:center;justify-content:center}
+.window-control:hover{background:rgba(255,255,255,.12)}
+.wc-close:hover{background:rgba(180,40,40,.65)}
+
+/* In-game header */
+.app-header{display:flex;align-items:center;height:var(--header-h);min-height:var(--header-h);padding:0 8px;background:#0d0b07;border-bottom:1px solid rgba(221,134,6,.22);gap:8px;flex-shrink:0}
+.logo-icon-sm{font-size:12px}
+.logo-text{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:13px;color:var(--accent);letter-spacing:.06em;text-transform:uppercase}
+.map-info{display:flex;align-items:baseline;gap:8px}
+.map-name{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:14px;color:var(--text)}
+.map-type{font-size:11px;color:var(--text-muted)}
+.hotkey-hint{margin-left:auto}
+.hotkey-hint kbd{padding:2px 6px;border-radius:3px;background:rgba(255,255,255,.06);border:1px solid rgba(221,134,6,.2);color:var(--text-muted);font-size:11px}
+.match-state-badge{font-size:11px;color:var(--text-muted)}
+.match-state-badge.active{color:var(--green);font-weight:700}
+
+/* App layout */
+.app-layout{display:flex;flex:1;overflow:hidden}
+
+/* Sidebar */
+.sidebar{width:var(--sidebar-w);min-width:var(--sidebar-w);background:var(--bg-sidebar);border-right:1px solid rgba(221,134,6,.1);display:flex;flex-direction:column}
+.sidebar-logo{display:flex;flex-direction:column;align-items:center;padding:20px 12px 16px;border-bottom:1px solid rgba(221,134,6,.1);gap:8px}
+.sidebar-logo .logo-eye{font-size:30px}
+.sidebar-logo .logo-name{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+.sidebar-nav{flex:1;display:flex;flex-direction:column;padding:10px 0;gap:2px}
+.nav-btn{display:flex;align-items:center;gap:10px;padding:9px 12px;margin:0 6px;border-radius:var(--radius);font-size:12px;font-weight:500;color:var(--text-muted);background:transparent;border:1px solid transparent;transition:all .15s;width:calc(100% - 12px);cursor:pointer}
+.nav-btn:hover{color:var(--text);background:rgba(221,134,6,.08);border-color:rgba(221,134,6,.12)}
+.nav-btn.active{color:var(--accent);background:rgba(221,134,6,.14);border-color:rgba(221,134,6,.3);font-weight:600}
+.nav-btn svg{flex-shrink:0;opacity:.6}
+.nav-btn.active svg{opacity:1}
+.sidebar-footer{padding:10px 8px 14px;border-top:1px solid rgba(221,134,6,.1)}
+.launch-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:10px;border-radius:var(--radius);background:linear-gradient(135deg,#943901,#C25007,#DD8606);color:#FFF;font-size:11px;font-weight:700;letter-spacing:.04em;cursor:pointer}
+
+/* Main content */
+.desktop main{flex:1;overflow-y:auto;padding:16px 20px 20px;background:var(--bg-deep)}
+.tab-content{display:none}
+.tab-content.active{display:block}
+.section-title{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin:16px 0 8px}
+
+/* Profile */
+.profile-hero{display:flex;align-items:center;gap:16px;padding:16px;background:var(--bg-panel);border-radius:var(--radius);border:1px solid rgba(221,134,6,.14);margin-bottom:16px}
+.profile-avatar{width:54px;height:54px;border-radius:50%;background:linear-gradient(135deg,#411700,#C25007);display:flex;align-items:center;justify-content:center;font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:#fff;flex-shrink:0;border:2px solid rgba(221,134,6,.4)}
+.profile-info h2{font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:700;color:var(--text)}
+.profile-info p{font-size:12px;color:var(--text-muted);margin-top:4px}
+
+/* Stat cards */
+.stat-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
+.stat-card{background:var(--bg-panel);border-radius:var(--radius);border:1px solid rgba(255,255,255,.06);padding:14px 12px;text-align:center}
+.stat-card.win{border-color:rgba(107,191,133,.25)}
+.stat-card.loss{border-color:rgba(184,64,64,.25)}
+.stat-value{font-family:'Rajdhani',sans-serif;font-size:28px;font-weight:700;color:var(--accent)}
+.stat-card.win .stat-value{color:var(--green)}
+.stat-card.loss .stat-value{color:var(--red)}
+.stat-label{font-size:11px;color:var(--text-muted);margin-top:2px}
+.hero-chips-list{display:flex;flex-wrap:wrap;gap:8px}
+.hero-chip{padding:4px 10px;border-radius:20px;font-size:12px;font-weight:500;background:rgba(255,255,255,.06);color:var(--text)}
+.hero-chip.dps{background:rgba(194,80,7,.2);color:var(--dps)}
+.hero-chip.support{background:rgba(221,134,6,.16);color:var(--supp)}
+.hero-chip.tank{background:rgba(110,168,212,.18);color:var(--tank)}
+.hero-chip em{font-style:normal;color:var(--text-muted);margin-left:4px;font-size:11px}
+
+/* Role filter + hero grid */
+.role-filter{display:flex;gap:6px;margin-bottom:12px}
+.role-btn{padding:5px 14px;border-radius:20px;font-size:12px;font-weight:600;background:var(--bg-panel);border:1px solid rgba(255,255,255,.08);color:var(--text-muted);cursor:pointer}
+.role-btn.active{background:rgba(221,134,6,.14);color:var(--accent);border-color:rgba(221,134,6,.4)}
+.hero-guide-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px}
+.hero-card{background:var(--bg-panel);border-radius:var(--radius);border:1px solid rgba(221,134,6,.1);overflow:hidden}
+.hero-card-header{display:flex;align-items:center;gap:8px;padding:10px 12px;background:rgba(0,0,0,.25);border-bottom:1px solid rgba(221,134,6,.08)}
+.hero-card-name{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:14px;color:var(--text);flex:1}
+.role-badge{display:inline-block;padding:1px 6px;border-radius:3px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em}
+.role-badge.dps{background:rgba(194,80,7,.22);color:var(--dps)}
+.role-badge.supp{background:rgba(221,134,6,.18);color:var(--supp)}
+.role-badge.tank{background:rgba(110,168,212,.2);color:var(--tank)}
+.difficulty-badge{font-size:10px;font-weight:700;padding:1px 5px;border-radius:3px}
+.diff-1{background:rgba(107,191,133,.15);color:var(--green)}
+.diff-2{background:rgba(221,134,6,.15);color:var(--supp)}
+.diff-3{background:rgba(184,64,64,.15);color:var(--red)}
+.hero-card-body{padding:10px 12px;display:flex;flex-direction:column;gap:6px}
+.counter-row{display:flex;align-items:flex-start;gap:6px;flex-wrap:wrap}
+.counter-label{font-size:11px;font-weight:600;flex-shrink:0}
+.counter-label.strong{color:var(--green)}
+.counter-label.weak{color:var(--red)}
+.counter-list{display:flex;flex-wrap:wrap;gap:4px}
+.hero-tag{padding:1px 6px;border-radius:3px;font-size:11px;background:rgba(221,134,6,.12);color:var(--accent)}
+.hero-tag.counter{background:rgba(184,64,64,.12);color:var(--red)}
+.hero-tips{font-size:11px;color:var(--text-muted);display:flex;gap:5px}
+
+/* Stats table */
+.hero-stats-table{background:var(--bg-panel);border-radius:var(--radius);border:1px solid rgba(221,134,6,.1);overflow:hidden}
+.table-header,.table-row{display:grid;grid-template-columns:2fr 1fr 1fr 1fr 2fr 1fr;padding:8px 12px;align-items:center;gap:8px}
+.table-header{background:rgba(221,134,6,.07);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text-muted)}
+.table-row{border-top:1px solid rgba(255,255,255,.04);font-size:12px}
+.table-row:hover{background:rgba(221,134,6,.04)}
+.winrate-bar-wrap{position:relative;height:14px;background:rgba(255,255,255,.07);border-radius:3px;overflow:hidden;display:flex;align-items:center}
+.winrate-bar{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,#943901,#DD8606)}
+.winrate-label{position:relative;z-index:1;font-size:11px;padding:0 6px;font-weight:700;color:#fff}
+.kd-good{color:var(--green);font-weight:600}
+.kd-bad{color:var(--red);font-weight:600}
+.match-list{display:flex;flex-direction:column;gap:4px}
+.match-row{display:grid;grid-template-columns:26px 1fr 1.2fr 100px 60px;align-items:center;gap:10px;padding:6px 12px;background:var(--bg-panel);border-radius:var(--radius);border-left:3px solid transparent;font-size:12px}
+.match-row.win{border-left-color:var(--green)}
+.match-row.loss{border-left-color:var(--red)}
+.match-outcome{font-weight:700;font-size:13px;color:var(--text-muted)}
+.match-row.win .match-outcome{color:var(--green)}
+.match-row.loss .match-outcome{color:var(--red)}
+
+/* In-game overlay */
+.ingame-main{flex:1;overflow-y:auto;padding:8px 10px 10px;display:flex;flex-direction:column;gap:8px}
+.roster-section{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.roster-col{background:var(--bg-panel);border-radius:var(--radius);border:1px solid rgba(221,134,6,.1);overflow:hidden}
+.roster-col-title{padding:5px 10px;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:11px;letter-spacing:.1em;text-transform:uppercase;background:rgba(0,0,0,.3);border-bottom:1px solid rgba(221,134,6,.08)}
+.team-ally{color:var(--green)}
+.team-enemy{color:var(--dps)}
+.roster-entry{display:grid;grid-template-columns:1fr 1fr 60px;align-items:center;padding:4px 8px;gap:6px;border-radius:3px;font-size:12px}
+.roster-entry.is-local{background:rgba(221,134,6,.07);border-left:2px solid var(--accent);padding-left:6px}
+.roster-hero{display:flex;align-items:center;gap:5px;overflow:hidden}
+.hero-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;background:var(--text-muted)}
+.hero-dot.tank{background:var(--tank)}
+.hero-dot.dps{background:var(--dps)}
+.hero-dot.supp{background:var(--supp)}
+.roster-hero-name{font-weight:600;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.roster-hero-name.tank{color:var(--tank)}
+.roster-hero-name.dps{color:var(--dps)}
+.roster-hero-name.supp{color:var(--supp)}
+.roster-player{display:flex;align-items:center;gap:4px;overflow:hidden}
+.roster-btag{font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.roster-btag.ally{color:rgba(107,191,133,.9)}
+.roster-btag.enemy{color:rgba(194,80,7,.9)}
+.met-badge{flex-shrink:0;font-size:10px;color:var(--accent)}
+.roster-kda{text-align:right;font-size:11px;color:var(--text-muted)}
+.recs-section{background:var(--bg-panel);border-radius:var(--radius);border:1px solid rgba(221,134,6,.15);padding:8px 10px}
+.recs-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.rec-title{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-bottom:6px}
+.rec-chips{display:flex;flex-wrap:wrap;gap:4px}
+.rec-chip{padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600;background:rgba(255,255,255,.06);color:var(--text)}
+.rec-chip.dps{background:rgba(194,80,7,.2);color:var(--dps)}
+.rec-chip.tank{background:rgba(110,168,212,.18);color:var(--tank)}
+.rec-chip.supp{background:rgba(221,134,6,.16);color:var(--supp)}
+</style>
+</head>
+<body>
+<div class="page-title">VisionWatch — Preview</div>
+<p class="page-sub">Просмотр UI без Overwolf. Данные — мок.</p>
+
+<div class="previews">
+
+<!-- ══════════════ DESKTOP WINDOW ══════════════ -->
+<div class="window window-desktop desktop">
+  <div class="title-bar">
+    <span class="title-bar-text">VisionWatch</span>
+    <div class="window-controls-group">
+      <div class="window-control">─</div>
+      <div class="window-control">□</div>
+      <div class="window-control wc-close">✕</div>
+    </div>
+  </div>
+  <div class="app-layout">
+    <aside class="sidebar">
+      <div class="sidebar-logo">
+        <span class="logo-eye">👁</span>
+        <span class="logo-name">VisionWatch</span>
+      </div>
+      <nav class="sidebar-nav">
+        <button class="nav-btn active" onclick="switchTab('profile',this)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+          <span>Профиль</span>
+        </button>
+        <button class="nav-btn" onclick="switchTab('stats',this)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M5 9.2h3V19H5zm5.6-4.2H13V19h-2.4zm5.6 8H19v6h-2.8z"/></svg>
+          <span>Статистика</span>
+        </button>
+        <button class="nav-btn" onclick="switchTab('heroes',this)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg>
+          <span>Гайды</span>
+        </button>
+        <button class="nav-btn" onclick="switchTab('guide',this)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M11 18h2v-2h-2v2zm1-16C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-2.21 0-4 1.79-4 4h2c0-1.1.9-2 2-2s2 .9 2 2c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5 0-2.21-1.79-4-4-4z"/></svg>
+          <span>Справка</span>
+        </button>
+      </nav>
+      <div class="sidebar-footer">
+        <button class="launch-btn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg>
+          <span>Запустить Overwatch</span>
+        </button>
+      </div>
+    </aside>
+
+    <main>
+      <!-- Profile tab -->
+      <section id="tab-profile" class="tab-content active">
+        <div class="profile-hero">
+          <div class="profile-avatar">K</div>
+          <div class="profile-info">
+            <h2>KuroNeko#2241</h2>
+            <p class="muted">Последний матч: Точки захвата • Храм Анубиса</p>
+          </div>
+        </div>
+        <div class="stat-cards">
+          <div class="stat-card"><div class="stat-value">47</div><div class="stat-label">Матчей сыграно</div></div>
+          <div class="stat-card win"><div class="stat-value">28</div><div class="stat-label">Победы</div></div>
+          <div class="stat-card loss"><div class="stat-value">19</div><div class="stat-label">Поражения</div></div>
+          <div class="stat-card"><div class="stat-value">59%</div><div class="stat-label">% побед</div></div>
+        </div>
+        <div class="section-title">Любимые герои</div>
+        <div class="hero-chips-list">
+          <span class="hero-chip dps">Трейсер <em>14м</em></span>
+          <span class="hero-chip support">Ана <em>11м</em></span>
+          <span class="hero-chip tank">Рейнхардт <em>9м</em></span>
+          <span class="hero-chip dps">Солдат: 76 <em>7м</em></span>
+          <span class="hero-chip support">Дзенъятта <em>6м</em></span>
+        </div>
+      </section>
+
+      <!-- Stats tab -->
+      <section id="tab-stats" class="tab-content">
+        <div class="section-title">Статистика по героям</div>
+        <div class="hero-stats-table">
+          <div class="table-header"><span>Герой</span><span>Матчей</span><span>Роль</span><span>Победы</span><span>% побед</span><span>K/D</span></div>
+          <div class="table-row"><span class="dps">Трейсер</span><span>14</span><span><span class="role-badge dps">DPS</span></span><span style="color:var(--green)">10</span><div class="winrate-bar-wrap"><div class="winrate-bar" style="width:71%"></div><span class="winrate-label">71%</span></div><span class="kd-good">2.8</span></div>
+          <div class="table-row"><span class="supp">Ана</span><span>11</span><span><span class="role-badge supp">Хил</span></span><span style="color:var(--green)">7</span><div class="winrate-bar-wrap"><div class="winrate-bar" style="width:63%"></div><span class="winrate-label">63%</span></div><span class="kd-good">1.4</span></div>
+          <div class="table-row"><span class="tank">Рейнхардт</span><span>9</span><span><span class="role-badge tank">Танк</span></span><span style="color:var(--green)">5</span><div class="winrate-bar-wrap"><div class="winrate-bar" style="width:55%"></div><span class="winrate-label">55%</span></div><span class="kd-bad">0.7</span></div>
+        </div>
+        <div class="section-title" style="margin-top:20px">Последние матчи</div>
+        <div class="match-list">
+          <div class="match-row win"><span class="match-outcome">В</span><span>Кингс Роу</span><span class="dps">Трейсер</span><span class="muted">12/4/8</span><span class="muted">сегодня</span></div>
+          <div class="match-row loss"><span class="match-outcome">П</span><span>Волскайя</span><span class="supp">Ана</span><span class="muted">4/6/14</span><span class="muted">вчера</span></div>
+          <div class="match-row win"><span class="match-outcome">В</span><span>Ливерпуль</span><span class="tank">Рейнхардт</span><span class="muted">2/3/11</span><span class="muted">вчера</span></div>
+        </div>
+      </section>
+
+      <!-- Heroes tab -->
+      <section id="tab-heroes" class="tab-content">
+        <div class="role-filter">
+          <button class="role-btn active">Все</button>
+          <button class="role-btn">Танки</button>
+          <button class="role-btn">ДПС</button>
+          <button class="role-btn">Хилеры</button>
+        </div>
+        <div class="hero-guide-grid">
+          <div class="hero-card">
+            <div class="hero-card-header"><span class="hero-card-name dps">Трейсер</span><span class="role-badge dps">DPS</span><span class="difficulty-badge diff-3">★★★</span></div>
+            <div class="hero-card-body">
+              <div class="counter-row"><span class="counter-label strong">Силён:</span><span class="counter-list"><span class="hero-tag">Бастион</span><span class="hero-tag">Турбосвин</span></span></div>
+              <div class="counter-row"><span class="counter-label weak">Слаб против:</span><span class="counter-list"><span class="hero-tag counter">Кэссиди</span><span class="hero-tag counter">Сомбра</span></span></div>
+              <div class="hero-tips"><span>💡</span><span class="muted">Используй телепорт для ухода от АОЕ-способностей</span></div>
+            </div>
+          </div>
+          <div class="hero-card">
+            <div class="hero-card-header"><span class="hero-card-name supp">Ана</span><span class="role-badge supp">Хил</span><span class="difficulty-badge diff-3">★★★</span></div>
+            <div class="hero-card-body">
+              <div class="counter-row"><span class="counter-label strong">Силён:</span><span class="counter-list"><span class="hero-tag">Рейнхардт</span><span class="hero-tag">Гэндзи</span></span></div>
+              <div class="counter-row"><span class="counter-label weak">Слаб против:</span><span class="counter-list"><span class="hero-tag counter">Гэндзи</span><span class="hero-tag counter">Трейсер</span></span></div>
+              <div class="hero-tips"><span>💡</span><span class="muted">Приоритизируй Нано-усиление для танков</span></div>
+            </div>
+          </div>
+          <div class="hero-card">
+            <div class="hero-card-header"><span class="hero-card-name tank">Рейнхардт</span><span class="role-badge tank">Танк</span><span class="difficulty-badge diff-1">★</span></div>
+            <div class="hero-card-body">
+              <div class="counter-row"><span class="counter-label strong">Силён:</span><span class="counter-list"><span class="hero-tag">Фарра</span><span class="hero-tag">Дзенъятта</span></span></div>
+              <div class="counter-row"><span class="counter-label weak">Слаб против:</span><span class="counter-list"><span class="hero-tag counter">Сломанная стрела</span><span class="hero-tag counter">Ясуо</span></span></div>
+              <div class="hero-tips"><span>💡</span><span class="muted">Держи щит поднятым при продвижении</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Guide tab -->
+      <section id="tab-guide" class="tab-content">
+        <div style="max-width:700px">
+          <h2 style="font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;color:var(--accent);margin-bottom:16px">📋 Как пользоваться VisionWatch</h2>
+          <div style="background:var(--bg-panel);border-radius:var(--radius);border:1px solid rgba(221,134,6,.1);padding:14px 16px;margin-bottom:10px">
+            <h3 style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:8px">🚀 Запуск</h3>
+            <p style="font-size:13px;color:var(--text-muted);line-height:1.6">VisionWatch запускается автоматически при старте Overwatch. Нажми кнопку <strong>Запустить Overwatch</strong> в боковом меню для быстрого старта.</p>
+          </div>
+          <div style="background:var(--bg-panel);border-radius:var(--radius);border:1px solid rgba(221,134,6,.1);padding:14px 16px;margin-bottom:10px">
+            <h3 style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:8px">🎮 Оверлей в игре</h3>
+            <ul style="font-size:13px;color:var(--text-muted);line-height:1.6;padding-left:18px">
+              <li><strong>Ctrl+Shift+Z</strong> — показать / скрыть оверлей</li>
+              <li>Зелёный ник — союзник, оранжевый — враг</li>
+              <li>Значок ★ — игрок уже встречался тебе раньше</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>
+
+<!-- ══════════════ IN-GAME OVERLAY ══════════════ -->
+<div class="window window-ingame">
+  <div class="app-header">
+    <span class="logo-icon-sm">👁</span>
+    <span class="logo-text">VW</span>
+    <div class="map-info" style="margin-left:8px">
+      <span class="map-name">Кингс Роу</span>
+      <span class="map-type">Эскорт</span>
+    </div>
+    <span class="match-state-badge active">● ИДЁТ МАТЧ</span>
+    <div class="hotkey-hint"><kbd id="hotkey-text">Ctrl+Shift+Z</kbd></div>
+    <div class="window-controls-group">
+      <div class="window-control">─</div>
+      <div class="window-control wc-close">✕</div>
+    </div>
+  </div>
+  <div class="ingame-main">
+    <div class="roster-section">
+      <div class="roster-col">
+        <div class="roster-col-title team-ally">▲ Союзники</div>
+        <div style="padding:4px 2px">
+          <div class="roster-entry is-local"><div class="roster-hero"><span class="hero-dot dps"></span><span class="roster-hero-name dps">Трейсер</span></div><div class="roster-player"><span class="roster-btag ally">KuroNeko#2241</span></div><div class="roster-kda">8/3/5</div></div>
+          <div class="roster-entry"><div class="roster-hero"><span class="hero-dot tank"></span><span class="roster-hero-name tank">Рейнхардт</span></div><div class="roster-player"><span class="roster-btag ally">Stormrage#1184</span></div><div class="roster-kda">1/2/9</div></div>
+          <div class="roster-entry"><div class="roster-hero"><span class="hero-dot supp"></span><span class="roster-hero-name supp">Ана</span></div><div class="roster-player"><span class="roster-btag ally">Healmancer#3091</span></div><div class="roster-kda">2/1/14</div></div>
+          <div class="roster-entry"><div class="roster-hero"><span class="hero-dot dps"></span><span class="roster-hero-name dps">Ханзо</span></div><div class="roster-player"><span class="roster-btag ally">Yomi#7743</span><span class="met-badge">★</span></div><div class="roster-kda">6/4/2</div></div>
+          <div class="roster-entry"><div class="roster-hero"><span class="hero-dot tank"></span><span class="roster-hero-name tank">Жнец</span></div><div class="roster-player"><span class="roster-btag ally">DarkSoul#5500</span></div><div class="roster-kda">7/5/3</div></div>
+        </div>
+      </div>
+      <div class="roster-col">
+        <div class="roster-col-title team-enemy">▼ Враги</div>
+        <div style="padding:4px 2px">
+          <div class="roster-entry"><div class="roster-hero"><span class="hero-dot dps"></span><span class="roster-hero-name dps">Кэссиди</span></div><div class="roster-player"><span class="roster-btag enemy">Gunslinger#9921</span></div><div class="roster-kda">9/5/3</div></div>
+          <div class="roster-entry"><div class="roster-hero"><span class="hero-dot tank"></span><span class="roster-hero-name tank">Сигма</span></div><div class="roster-player"><span class="roster-btag enemy">GravWell#4401</span></div><div class="roster-kda">3/4/8</div></div>
+          <div class="roster-entry"><div class="roster-hero"><span class="hero-dot supp"></span><span class="roster-hero-name supp">Люсио</span></div><div class="roster-player"><span class="roster-btag enemy">BeatDrop#2288</span><span class="met-badge">★</span></div><div class="roster-kda">1/2/18</div></div>
+          <div class="roster-entry"><div class="roster-hero"><span class="hero-dot dps"></span><span class="roster-hero-name dps">Гэндзи</span></div><div class="roster-player"><span class="roster-btag enemy">ShadowBlade#8877</span></div><div class="roster-kda">11/6/2</div></div>
+          <div class="roster-entry"><div class="roster-hero"><span class="hero-dot tank"></span><span class="roster-hero-name tank">Д.Ва</span></div><div class="roster-player"><span class="roster-btag enemy">NekoMeka#1133</span></div><div class="roster-kda">5/3/7</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="recs-section">
+      <div class="recs-row">
+        <div class="rec-block">
+          <div class="rec-title">Карта: Кингс Роу</div>
+          <div class="rec-chips">
+            <span class="rec-chip dps">Трейсер</span>
+            <span class="rec-chip tank">Рейнхардт</span>
+            <span class="rec-chip supp">Ана</span>
+            <span class="rec-chip dps">Солдат: 76</span>
+            <span class="rec-chip supp">Люсио</span>
+          </div>
+        </div>
+        <div class="rec-block">
+          <div class="rec-title">Контрпики</div>
+          <div class="rec-chips">
+            <span class="rec-chip dps">Сомбра</span>
+            <span class="rec-chip tank">Орисса</span>
+            <span class="rec-chip supp">Бригитта</span>
+            <span class="rec-chip dps">Кирико</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /previews -->
+
+<script>
+function switchTab(id, btn) {
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(s => s.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('tab-' + id).classList.add('active');
+}
+</script>
+</body>
+</html>
+
 :root{
   --bg-deep:#0a1628;--bg-card:#122040;--bg-panel:#0d1e36;
   --accent:#00c8e0;--accent-dim:#008ca0;--orange:#f77f00;

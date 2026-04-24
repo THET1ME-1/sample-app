@@ -3,9 +3,10 @@ import { OWHotkeys } from '@overwolf/overwolf-api-ts';
 import { AppWindow }                                from '../AppWindow';
 import { kWindowNames, kHotkeys }                  from '../consts';
 import { PlayerHistoryService }                    from '../services/player-history-service';
-import { getGoodHeroesForMap }                     from '../data/maps';
-import { HEROES, getCountersForHero, getHeroInfo } from '../data/heroes';
-import { AppState, RosterEntry }                   from '../background/background';
+
+import { HEROES, getCountersForHero, getHeroInfo, getHeroIcon } from '../data/heroes';
+import { getGoodHeroesForMap, getMapImage }                      from '../data/maps';
+import { AppState, RosterEntry }                                  from '../background/background';
 
 // ─── Role colour helper ───────────────────────────────────────────────────────
 function roleClass(role: string): string {
@@ -69,8 +70,14 @@ class InGameController extends AppWindow {
   private render(state: AppState): void {
     const mapNameEl = document.getElementById('map-name');
     const mapTypeEl = document.getElementById('map-type');
+    const mapThumbEl = document.getElementById('map-thumb') as HTMLImageElement | null;
     if (mapNameEl) mapNameEl.textContent = state.mapName || 'Ожидание матча…';
     if (mapTypeEl) mapTypeEl.textContent = state.mapType || '';
+    if (mapThumbEl) {
+      const img = getMapImage(state.mapId);
+      if (img) { mapThumbEl.src = img; mapThumbEl.style.display = ''; }
+      else { mapThumbEl.style.display = 'none'; }
+    }
 
     const badgeEl = document.getElementById('match-state-badge');
     if (badgeEl) {
@@ -117,11 +124,15 @@ class InGameController extends AppWindow {
       const displayName = p.playerName || p.battleTag || '???';
       const rc         = roleClass(p.heroRole);
       const kdaStr     = `${p.kills}/${p.deaths}/${p.assists}`;
+      const icon       = getHeroIcon(p.heroName);
 
       return `
         <div class="roster-entry ${p.isLocal ? 'is-local' : ''}">
           <div class="roster-hero">
-            <span class="hero-dot ${rc}"></span>
+            ${icon
+              ? `<img class="hero-icon-sm" src="${icon}" alt="" onerror="this.style.display='none'">`
+              : `<span class="hero-dot ${rc}"></span>`
+            }
             <span class="roster-hero-name ${rc}">${heroDisplay(p.heroName)}</span>
           </div>
           <div class="roster-player">
@@ -142,9 +153,10 @@ class InGameController extends AppWindow {
       return;
     }
     el.innerHTML = heroes.slice(0, 5).map(name => {
-      const h  = HEROES.find(x => x.name === name);
-      const rc = h ? roleClass(h.role) : '';
-      return `<span class="rec-chip ${rc}">${heroDisplay(name)}</span>`;
+      const h    = HEROES.find(x => x.name === name);
+      const rc   = h ? roleClass(h.role) : '';
+      const icon = getHeroIcon(name);
+      return `<span class="rec-chip ${rc}">${icon ? `<img class="chip-icon" src="${icon}" alt="" onerror="this.style.display='none'">` : ''}${heroDisplay(name)}</span>`;
     }).join('');
   }
 
@@ -176,9 +188,10 @@ class InGameController extends AppWindow {
     }
 
     el.innerHTML = sorted.map(name => {
-      const h  = getHeroInfo(name);
-      const rc = h ? roleClass(h.role) : '';
-      return `<span class="rec-chip ${rc}">${heroDisplay(name)}</span>`;
+      const h    = getHeroInfo(name);
+      const rc   = h ? roleClass(h.role) : '';
+      const icon = getHeroIcon(name);
+      return `<span class="rec-chip ${rc}">${icon ? `<img class="chip-icon" src="${icon}" alt="" onerror="this.style.display='none'">` : ''}${heroDisplay(name)}</span>`;
     }).join('');
   }
 }
