@@ -1,14 +1,255 @@
-body {
+/* ── Desktop window styles ─────────────────────────────────────────── */
+body.desktop {
   display: flex;
   flex-direction: column;
-  margin: 0px;
-  min-height: 100vh;
-  overflow: hidden;
-  font-size: 14px;
-  background-color: #f6f6f6;
-  color: black;
-  font-family: sans-serif;
+  background: var(--bg-deep);
 }
+
+main {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 20px 20px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0,200,224,.25) transparent;
+}
+main::-webkit-scrollbar { width: 5px; }
+main::-webkit-scrollbar-thumb { background: rgba(0,200,224,.25); border-radius: 3px; }
+
+/* ── Tabs content ───────────────────────────────────────────────────── */
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+/* ── Profile tab ────────────────────────────────────────────────────── */
+.profile-hero {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  border: 1px solid rgba(0,200,224,.12);
+  margin-bottom: 16px;
+}
+.profile-avatar {
+  width: 54px; height: 54px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent-dim), var(--orange));
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 22px; font-weight: 700;
+  color: #fff; flex-shrink: 0;
+}
+.profile-info h2 {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 18px; font-weight: 700;
+  color: var(--text);
+}
+.profile-info p { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+
+/* Stat cards */
+.stat-cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.stat-card {
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  border: 1px solid rgba(255,255,255,.06);
+  padding: 14px 12px;
+  text-align: center;
+}
+.stat-card.win  { border-color: rgba(0,229,160,.2); }
+.stat-card.loss { border-color: rgba(255,71,87,.2); }
+.stat-value {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 28px; font-weight: 700;
+  color: var(--accent);
+}
+.stat-card.win  .stat-value { color: var(--green); }
+.stat-card.loss .stat-value { color: var(--red); }
+.stat-label { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+
+/* Hero chips */
+.hero-chips-list { display: flex; flex-wrap: wrap; gap: 8px; }
+.hero-chip {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px; font-weight: 500;
+  background: rgba(255,255,255,.06);
+}
+.hero-chip em { font-style: normal; color: var(--text-muted); margin-left: 4px; font-size: 11px; }
+.hero-chip.tank { background: rgba(59,158,255,.18); color: var(--tank-color); }
+.hero-chip.dps  { background: rgba(255,107,129,.18); color: var(--dps-color); }
+.hero-chip.support { background: rgba(255,211,42,.14); color: var(--supp-color); }
+
+/* ── Stats tab ───────────────────────────────────────────────────────── */
+.hero-stats-table {
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  border: 1px solid rgba(255,255,255,.06);
+  overflow: hidden;
+}
+.table-header, .table-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr 2fr 1fr;
+  padding: 8px 12px;
+  align-items: center;
+  gap: 8px;
+}
+.table-header {
+  background: rgba(0,200,224,.07);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--text-muted);
+}
+.table-row {
+  border-top: 1px solid rgba(255,255,255,.04);
+  font-size: 12px;
+}
+.table-row:hover { background: rgba(255,255,255,.03); }
+
+.winrate-bar-wrap {
+  position: relative;
+  height: 14px;
+  background: rgba(255,255,255,.07);
+  border-radius: 3px;
+  overflow: hidden;
+  display: flex; align-items: center;
+}
+.winrate-bar {
+  position: absolute; left: 0; top: 0; bottom: 0;
+  background: linear-gradient(90deg, var(--accent-dim), var(--accent));
+  transition: width .3s;
+}
+.winrate-label {
+  position: relative;
+  z-index: 1;
+  font-size: 11px;
+  padding: 0 6px;
+  font-weight: 700;
+}
+.kd-good { color: var(--green); font-weight: 600; }
+.kd-bad  { color: var(--red);   font-weight: 600; }
+
+/* Recent matches */
+.match-list { display: flex; flex-direction: column; gap: 4px; }
+.match-row {
+  display: grid;
+  grid-template-columns: 26px 1fr 1.2fr 100px 60px;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 12px;
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  border-left: 3px solid transparent;
+  font-size: 12px;
+}
+.match-row.win  { border-left-color: var(--green); }
+.match-row.loss { border-left-color: var(--red); }
+.match-outcome {
+  font-weight: 700; font-size: 13px;
+  color: var(--text-muted);
+}
+.match-row.win  .match-outcome { color: var(--green); }
+.match-row.loss .match-outcome { color: var(--red); }
+
+/* ── Hero Guide tab ─────────────────────────────────────────────────── */
+.role-filter {
+  display: flex; gap: 6px; margin-bottom: 12px;
+}
+.role-btn {
+  padding: 5px 14px;
+  border-radius: 20px;
+  font-size: 12px; font-weight: 600;
+  background: var(--bg-card);
+  border: 1px solid rgba(255,255,255,.08);
+  color: var(--text-muted);
+  transition: all .15s;
+}
+.role-btn:hover { color: var(--text); border-color: rgba(255,255,255,.2); }
+.role-btn.active { background: rgba(0,200,224,.15); color: var(--accent); border-color: var(--accent-dim); }
+.role-btn.tank.active { background: rgba(59,158,255,.15); color: var(--tank-color); border-color: var(--tank-color); }
+.role-btn.dps.active  { background: rgba(255,107,129,.15); color: var(--dps-color);  border-color: var(--dps-color); }
+.role-btn.supp.active { background: rgba(255,211,42,.12); color: var(--supp-color); border-color: var(--supp-color); }
+
+.hero-guide-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 10px;
+}
+.hero-card {
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  border: 1px solid rgba(255,255,255,.07);
+  overflow: hidden;
+  transition: border-color .15s;
+}
+.hero-card:hover { border-color: rgba(0,200,224,.25); }
+.hero-card-header {
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 12px;
+  background: rgba(0,0,0,.18);
+  border-bottom: 1px solid rgba(255,255,255,.06);
+}
+.hero-card-name {
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 700; font-size: 14px;
+  color: var(--text); flex: 1;
+}
+.difficulty-badge {
+  font-size: 10px; font-weight: 700;
+  padding: 1px 5px; border-radius: 3px;
+}
+.diff-1 { background: rgba(0,229,160,.15); color: var(--green); }
+.diff-2 { background: rgba(255,211,42,.12); color: var(--supp-color); }
+.diff-3 { background: rgba(255,71,87,.15); color: var(--red); }
+
+.hero-card-body { padding: 10px 12px; display: flex; flex-direction: column; gap: 7px; }
+.counter-row { display: flex; align-items: flex-start; gap: 6px; flex-wrap: wrap; }
+.counter-label { font-size: 11px; font-weight: 600; flex-shrink: 0; }
+.counter-label.strong { color: var(--green); }
+.counter-label.weak   { color: var(--red); }
+.counter-list { display: flex; flex-wrap: wrap; gap: 4px; }
+.hero-tag {
+  padding: 1px 6px; border-radius: 3px; font-size: 11px;
+  background: rgba(0,200,224,.1); color: var(--accent);
+}
+.hero-tag.counter { background: rgba(255,71,87,.1); color: var(--red); }
+.hero-tips { font-size: 11px; color: var(--text-muted); display: flex; gap: 5px; }
+.tip-icon { flex-shrink: 0; }
+
+/* ── Guide tab ──────────────────────────────────────────────────────────── */
+.guide-content { max-width: 760px; }
+.guide-content h2 {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 20px; font-weight: 700;
+  color: var(--accent);
+  margin-bottom: 16px;
+}
+.guide-section {
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  border: 1px solid rgba(255,255,255,.06);
+  padding: 14px 16px;
+  margin-bottom: 10px;
+}
+.guide-section h3 {
+  font-size: 14px; font-weight: 700;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+.guide-section p, .guide-section ul {
+  font-size: 13px; color: var(--text-muted); line-height: 1.6;
+}
+.guide-section ul { padding-left: 18px; }
+.guide-section li { margin-bottom: 4px; }
+.error-section { border-color: rgba(255,71,87,.18); }
+.error-section h3 { color: var(--red); }
+.error-section .btn-secondary { margin-top: 10px; }
 
 main {
   flex: auto;

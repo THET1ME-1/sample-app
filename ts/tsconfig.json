@@ -4,6 +4,7 @@
     "module": "none",
     "sourceMap": true,
     "outDir": "./dist",
+    "rootDir": "./src",
     "moduleResolution": "node",
     "removeComments": true,
     "strict": true,
@@ -11,10 +12,7 @@
     "strictNullChecks": false,
     "types": [
       "@overwolf/types"
-    ],
-    "rootDirs": [
-      "./src"
-    ],
+    ]
   },
   "exclude": [
     "node_modules"

@@ -1,138 +1,191 @@
-import {
-  OWGames,
-  OWGamesEvents,
-  OWHotkeys
-} from "@overwolf/overwolf-api-ts";
+import { OWHotkeys } from '@overwolf/overwolf-api-ts';
 
-import { AppWindow } from "../AppWindow";
-import { kHotkeys, kWindowNames, kGamesFeatures } from "../consts";
+import { AppWindow }                                from '../AppWindow';
+import { kWindowNames, kHotkeys }                  from '../consts';
+import { PlayerHistoryService }                    from '../services/player-history-service';
+import { getGoodHeroesForMap }                     from '../data/maps';
+import { HEROES, getCountersForHero, getHeroInfo } from '../data/heroes';
+import { AppState, RosterEntry }                   from '../background/background';
 
-import WindowState = overwolf.windows.WindowStateEx;
+// ─── Role colour helper ───────────────────────────────────────────────────────
+function roleClass(role: string): string {
+  switch (role?.toLowerCase()) {
+    case 'tank':    return 'tank';
+    case 'dps':     return 'dps';
+    case 'support': return 'supp';
+    default:        return '';
+  }
+}
 
-// The window displayed in-game while a game is running.
+function heroDisplay(name: string): string {
+  const h = HEROES.find(x => x.name === name);
+  return h ? h.displayName : (name || '—');
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+class InGameController extends AppWindow {
+  private _history = PlayerHistoryService.instance();
+  private _bridge: any = null;
+  private _unsubscribe: (() => void) | null = null;
+  private _visible = true;
+
+  constructor() {
+    super(kWindowNames.inGame);
+    this.initHotkey();
+    this.connectBridge();
+  }
+
+  // ─── Bridge polling ───────────────────────────────────────────────────
+
+  private connectBridge(): void {
+    const mainWindow = overwolf.windows.getMainWindow();
+    if (mainWindow && (mainWindow as any).vwBridge) {
+      this._bridge = (mainWindow as any).vwBridge;
+      this.render(this._bridge.getState());
+      this._unsubscribe = this._bridge.subscribe((state: AppState) => this.render(state));
+    } else {
+      setTimeout(() => this.connectBridge(), 500);
+    }
+  }
+
+  // ─── Hotkey ───────────────────────────────────────────────────────────
+
+  private initHotkey(): void {
+    OWHotkeys.onHotkeyDown(kHotkeys.toggle, () => this.toggleVisibility());
+    OWHotkeys.getHotkeyText(kHotkeys.toggle).then(text => {
+      const el = document.getElementById('hotkey-text');
+      if (el) el.textContent = text;
+    });
+  }
+
+  private async toggleVisibility(): Promise<void> {
+    this._visible = !this._visible;
+    const main = document.querySelector<HTMLElement>('main');
+    if (main) main.style.display = this._visible ? '' : 'none';
+  }
+
+  // ─── Render ───────────────────────────────────────────────────────────
+
+  private render(state: AppState): void {
+    const mapNameEl = document.getElementById('map-name');
+    const mapTypeEl = document.getElementById('map-type');
+    if (mapNameEl) mapNameEl.textContent = state.mapName || 'Ожидание матча…';
+    if (mapTypeEl) mapTypeEl.textContent = state.mapType || '';
+
+    const badgeEl = document.getElementById('match-state-badge');
+    if (badgeEl) {
+      if (state.matchActive) {
+        badgeEl.textContent = '● ИДЁТ МАТЧ';
+        badgeEl.className = 'match-state-badge active';
+      } else {
+        badgeEl.textContent = '';
+        badgeEl.className = 'match-state-badge';
+      }
+    }
+
+    const waitingEl  = document.getElementById('waiting-msg');
+    const rosterEl   = document.querySelector<HTMLElement>('.roster-section');
+    const recsEl     = document.getElementById('recs-section');
+    const hasRoster  = state.roster.length > 0;
+    if (waitingEl) waitingEl.style.display = hasRoster ? 'none' : '';
+    if (rosterEl)  rosterEl.style.display  = hasRoster ? '' : 'none';
+    if (recsEl)    recsEl.style.display    = hasRoster ? '' : 'none';
+
+    if (!hasRoster) return;
+
+    const allies  = state.roster.filter(p => p.isTeammate || p.isLocal);
+    const enemies = state.roster.filter(p => !p.isTeammate && !p.isLocal);
+    this.renderTeam('roster-ally',  allies);
+    this.renderTeam('roster-enemy', enemies);
+
+    this.renderMapHeroes(state.mapId);
+    this.renderCounters(enemies);
+  }
+
+  private renderTeam(containerId: string, players: RosterEntry[]): void {
+    const el = document.getElementById(containerId);
+    if (!el) return;
+
+    if (players.length === 0) {
+      el.innerHTML = '<div class="muted" style="padding:8px 4px">Нет данных</div>';
+      return;
+    }
+
+    el.innerHTML = players.map(p => {
+      const enc        = this._history.getLastEncounter(p.battleTag || p.playerName);
+      const metBefore  = enc !== null;
+      const displayName = p.playerName || p.battleTag || '???';
+      const rc         = roleClass(p.heroRole);
+      const kdaStr     = `${p.kills}/${p.deaths}/${p.assists}`;
+
+      return `
+        <div class="roster-entry ${p.isLocal ? 'is-local' : ''}">
+          <div class="roster-hero">
+            <span class="hero-dot ${rc}"></span>
+            <span class="roster-hero-name ${rc}">${heroDisplay(p.heroName)}</span>
+          </div>
+          <div class="roster-player">
+            <span class="roster-btag ${p.isTeammate || p.isLocal ? 'ally' : 'enemy'}">${displayName}</span>
+            ${metBefore ? `<span class="met-badge" title="Встречались ${new Date(enc!.lastSeen).toLocaleDateString('ru-RU')} на ${enc!.mapName}">★</span>` : ''}
+          </div>
+          <div class="roster-kda muted">${kdaStr}</div>
+        </div>`;
+    }).join('');
+  }
+
+  private renderMapHeroes(mapId: string): void {
+    const el = document.getElementById('rec-map-heroes');
+    if (!el) return;
+    const heroes = getGoodHeroesForMap(mapId);
+    if (heroes.length === 0) {
+      el.innerHTML = '<span class="muted">Нет данных для этой карты</span>';
+      return;
+    }
+    el.innerHTML = heroes.slice(0, 5).map(name => {
+      const h  = HEROES.find(x => x.name === name);
+      const rc = h ? roleClass(h.role) : '';
+      return `<span class="rec-chip ${rc}">${heroDisplay(name)}</span>`;
+    }).join('');
+  }
+
+  private renderCounters(enemies: RosterEntry[]): void {
+    const el = document.getElementById('rec-counters');
+    if (!el) return;
+
+    const enemyHeroes = enemies.map(e => e.heroName).filter(Boolean);
+    if (enemyHeroes.length === 0) {
+      el.innerHTML = '<span class="muted">Герои врагов неизвестны</span>';
+      return;
+    }
+
+    const counterMap: Record<string, number> = {};
+    for (const heroName of enemyHeroes) {
+      for (const c of getCountersForHero(heroName)) {
+        counterMap[c] = (counterMap[c] ?? 0) + 1;
+      }
+    }
+
+    const sorted = Object.entries(counterMap)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 5)
+      .map(([name]) => name);
+
+    if (sorted.length === 0) {
+      el.innerHTML = '<span class="muted">Нет данных</span>';
+      return;
+    }
+
+    el.innerHTML = sorted.map(name => {
+      const h  = getHeroInfo(name);
+      const rc = h ? roleClass(h.role) : '';
+      return `<span class="rec-chip ${rc}">${heroDisplay(name)}</span>`;
+    }).join('');
+  }
+}
+
+new InGameController();
 // It listens to all info events and to the game events listed in the consts.ts file
 // and writes them to the relevant log using <pre> tags.
 // The window also sets up Ctrl+F as the minimize/restore hotkey.
 // Like the background window, it also implements the Singleton design pattern.
-class InGame extends AppWindow {
-  private static _instance: InGame;
-  private _gameEventsListener: OWGamesEvents;
-  private _eventsLog: HTMLElement;
-  private _infoLog: HTMLElement;
 
-  private constructor() {
-    super(kWindowNames.inGame);
-
-    this._eventsLog = document.getElementById('eventsLog');
-    this._infoLog = document.getElementById('infoLog');
-
-    this.setToggleHotkeyBehavior();
-    this.setToggleHotkeyText();
-  }
-
-  public static instance() {
-    if (!this._instance) {
-      this._instance = new InGame();
-    }
-
-    return this._instance;
-  }
-
-  public async run() {
-    const gameClassId = await this.getCurrentGameClassId();
-
-    const gameFeatures = kGamesFeatures.get(gameClassId);
-
-    if (gameFeatures && gameFeatures.length) {
-      this._gameEventsListener = new OWGamesEvents(
-        {
-          onInfoUpdates: this.onInfoUpdates.bind(this),
-          onNewEvents: this.onNewEvents.bind(this)
-        },
-        gameFeatures
-      );
-
-      this._gameEventsListener.start();
-    }
-  }
-
-  private onInfoUpdates(info) {
-    this.logLine(this._infoLog, info, false);
-  }
-
-  // Special events will be highlighted in the event log
-  private onNewEvents(e) {
-    const shouldHighlight = e.events.some(event => {
-      switch (event.name) {
-        case 'kill':
-        case 'death':
-        case 'assist':
-        case 'level':
-        case 'matchStart':
-        case 'match_start':
-        case 'matchEnd':
-        case 'match_end':
-          return true;
-      }
-
-      return false
-    });
-    this.logLine(this._eventsLog, e, shouldHighlight);
-  }
-
-  // Displays the toggle minimize/restore hotkey in the window header
-  private async setToggleHotkeyText() {
-    const gameClassId = await this.getCurrentGameClassId();
-    const hotkeyText = await OWHotkeys.getHotkeyText(kHotkeys.toggle, gameClassId);
-    const hotkeyElem = document.getElementById('hotkey');
-    hotkeyElem.textContent = hotkeyText;
-  }
-
-  // Sets toggleInGameWindow as the behavior for the Ctrl+F hotkey
-  private async setToggleHotkeyBehavior() {
-    const toggleInGameWindow = async (
-      hotkeyResult: overwolf.settings.hotkeys.OnPressedEvent
-    ): Promise<void> => {
-      console.log(`pressed hotkey for ${hotkeyResult.name}`);
-      const inGameState = await this.getWindowState();
-
-      if (inGameState.window_state === WindowState.NORMAL ||
-        inGameState.window_state === WindowState.MAXIMIZED) {
-        this.currWindow.minimize();
-      } else if (inGameState.window_state === WindowState.MINIMIZED ||
-        inGameState.window_state === WindowState.CLOSED) {
-        this.currWindow.restore();
-      }
-    }
-
-    OWHotkeys.onHotkeyDown(kHotkeys.toggle, toggleInGameWindow);
-  }
-
-  // Appends a new line to the specified log
-  private logLine(log: HTMLElement, data, highlight) {
-    const line = document.createElement('pre');
-    line.textContent = JSON.stringify(data);
-
-    if (highlight) {
-      line.className = 'highlight';
-    }
-
-    // Check if scroll is near bottom
-    const shouldAutoScroll =
-      log.scrollTop + log.offsetHeight >= log.scrollHeight - 10;
-
-    log.appendChild(line);
-
-    if (shouldAutoScroll) {
-      log.scrollTop = log.scrollHeight;
-    }
-  }
-
-  private async getCurrentGameClassId(): Promise<number | null> {
-    const info = await OWGames.getRunningGameInfo();
-
-    return (info && info.isRunning && info.classId) ? info.classId : null;
-  }
-}
-
-InGame.instance().run();

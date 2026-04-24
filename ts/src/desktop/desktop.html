@@ -1,86 +1,153 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="ru">
 <head>
   <meta charset="UTF-8" />
   <link rel="stylesheet" href="../../css/general.css" />
   <link rel="stylesheet" href="../../css/header.css" />
   <link rel="stylesheet" href="../../css/desktop.css" />
-  <link rel="stylesheet" href="../../css/modal.css" />
-  <title>Overwolf Sample App - Desktop page</title>
+  <title>VisionWatch — Overwatch Companion</title>
 </head>
-
 <body class="desktop">
-  <!-- -------------------------------- Header ------------------------------- -->
 
+  <!-- ── Header ────────────────────────────────────────────────────────── -->
   <header id="header" class="app-header">
-    <img src="../../img/header_icon.svg" />
-    <h1>Sample App / desktop window</h1>
+    <div class="app-logo">
+      <span class="logo-icon">👁</span>
+      <span class="logo-text">VisionWatch</span>
+    </div>
+    <nav class="tab-nav">
+      <button class="tab-btn active" data-tab="profile">Профиль</button>
+      <button class="tab-btn" data-tab="stats">Статистика</button>
+      <button class="tab-btn" data-tab="heroes">Гайды</button>
+      <button class="tab-btn" data-tab="guide">Как пользоваться</button>
+    </nav>
     <div class="window-controls-group">
-      <button id="minimizeButton" class="window-control window-control-minimize" />
-      <button id="maximizeButton" class="window-control window-control-maximize" />
-      <button id="closeButton" class="window-control window-control-close" />
+      <button id="minimizeButton" class="window-control window-control-minimize"></button>
+      <button id="maximizeButton" class="window-control window-control-maximize"></button>
+      <button id="closeButton"    class="window-control window-control-close"></button>
     </div>
   </header>
 
-  <!-- --------------------------------- Main -------------------------------- -->
+  <!-- ── Content ───────────────────────────────────────────────────────── -->
   <main>
-    <div class="desktopTop">
-      <h1>Overwolf Sample App</h1>
-      <p>
-        Welcome to the Overwolf tutorial app for developers.<br />
-        Learn how to build an app by using one!
-      </p>
-      <div id="version"></div>
-    </div>
-    <div class="desktopBottom">
-      <!-- Launch a game! -->
-      <div id="left">
-        <h1>
-          Launch a game and the In-Game window will pop-up automatically!
-        </h1>
-      </div>
-      <!-- Launch a game! -->
-      <div id="middle">
-        What can you learn with this sample app?
-        <br /><br />
-        1. How to listen to real-time game events and how to identify specific
-        events like match start/end, kill, and death.
-        <br /><br />
-        2. How to use a transparent background window as a service bus, that
-        acts as the main controller of your app.
-        <br /><br />
-        3. How to use Hotkeys that show/hide your app while you are in-game.
-      </div>
-      <!-- picture -->
-      <div id="right">
-        <div style="text-align: center">
-          <div style="display: inline-block">
-            <img src="../../img/cool_wolf.png" />
-          </div>
+
+    <!-- ── Profile Tab ─────────────────────────────────────────────────── -->
+    <section id="tab-profile" class="tab-content active">
+      <div class="profile-hero">
+        <div class="profile-avatar">
+          <span id="profile-initials">?</span>
+        </div>
+        <div class="profile-info">
+          <h2 id="profile-btag">Battle.NET tag появится после запуска игры</h2>
+          <p id="profile-subtitle" class="muted">Запусти Overwatch, чтобы увидеть данные профиля</p>
         </div>
       </div>
-    </div>
+
+      <div class="stat-cards">
+        <div class="stat-card">
+          <div class="stat-value" id="stat-total">0</div>
+          <div class="stat-label">Матчей сыграно</div>
+        </div>
+        <div class="stat-card win">
+          <div class="stat-value" id="stat-wins">0</div>
+          <div class="stat-label">Победы</div>
+        </div>
+        <div class="stat-card loss">
+          <div class="stat-value" id="stat-losses">0</div>
+          <div class="stat-label">Поражения</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="stat-winrate">—</div>
+          <div class="stat-label">Процент побед</div>
+        </div>
+      </div>
+
+      <div class="section-title">Любимые герои</div>
+      <div id="top-heroes-list" class="hero-chips-list">
+        <span class="muted">Нет данных — сыграй несколько матчей</span>
+      </div>
+    </section>
+
+    <!-- ── Statistics Tab ──────────────────────────────────────────────── -->
+    <section id="tab-stats" class="tab-content">
+      <div class="section-title">Статистика по героям</div>
+      <div id="hero-stats-table" class="hero-stats-table">
+        <div class="table-header">
+          <span>Герой</span>
+          <span>Матчей</span>
+          <span>Роль</span>
+          <span>Победы</span>
+          <span>% побед</span>
+          <span>K/D</span>
+        </div>
+        <div id="hero-stats-rows"></div>
+      </div>
+
+      <div class="section-title" style="margin-top:24px">Последние матчи</div>
+      <div id="recent-matches" class="match-list"></div>
+    </section>
+
+    <!-- ── Hero Guide Tab ──────────────────────────────────────────────── -->
+    <section id="tab-heroes" class="tab-content">
+      <div class="role-filter">
+        <button class="role-btn active" data-role="all">Все</button>
+        <button class="role-btn tank" data-role="Tank">Танки</button>
+        <button class="role-btn dps"  data-role="DPS">ДПС</button>
+        <button class="role-btn supp" data-role="Support">Хилеры</button>
+      </div>
+      <div id="hero-guide-grid" class="hero-guide-grid"></div>
+    </section>
+
+    <!-- ── How To Use Tab ──────────────────────────────────────────────── -->
+    <section id="tab-guide" class="tab-content">
+      <div class="guide-content">
+        <h2>📋 Как пользоваться VisionWatch</h2>
+
+        <div class="guide-section">
+          <h3>🚀 Запуск</h3>
+          <p>VisionWatch запускается автоматически при старте Overwatch. Лаунчер открывается сам, когда игры нет. Оверлей появляется в игре.</p>
+        </div>
+
+        <div class="guide-section">
+          <h3>🎮 Оверлей в игре</h3>
+          <ul>
+            <li><strong>Ctrl+Shift+Z</strong> — показать / скрыть оверлей</li>
+            <li>Оверлей показывает карту, состав команд, рекомендации</li>
+            <li>Цвет ника игрока <span style="color:#00e5a0">зелёный</span> — союзник, <span style="color:#ff6b6b">красный</span> — враг</li>
+            <li>Значок <strong>★</strong> рядом с игроком — ты уже встречал его в прошлых матчах</li>
+          </ul>
+        </div>
+
+        <div class="guide-section">
+          <h3>🗺️ Рекомендации по карте</h3>
+          <p>Оверлей автоматически показывает 5 лучших героев для текущей карты. Список составлен на основе метаигры и общих закономерностей.</p>
+        </div>
+
+        <div class="guide-section">
+          <h3>🔄 Контрпики</h3>
+          <p>Приложение анализирует состав вражеской команды и предлагает героев, которые являются контрпиками против их выбора. Предложения обновляются при смене героев врагами.</p>
+        </div>
+
+        <div class="guide-section">
+          <h3>📊 Статистика</h3>
+          <p>Все матчи сохраняются локально. На вкладке <strong>Статистика</strong> ты можешь видеть данные по каждому герою, историю матчей с результатами и процент побед.</p>
+        </div>
+
+        <div class="guide-section">
+          <h3>🧭 Гайды по героям</h3>
+          <p>На вкладке <strong>Гайды</strong> находится информация о каждом герое: роль, сложность, против кого он силён, и кто является его контрпиком. Используй фильтр по ролям.</p>
+        </div>
+
+        <div class="guide-section error-section">
+          <h3>🐛 Баги и ошибки</h3>
+          <p>Приложение автоматически сохраняет все ошибки в локальный журнал. Если что-то работает не так — проверь консоль (<strong>Ctrl+Shift+I</strong>) или пришли лог разработчику.</p>
+          <button id="clear-errors-btn" class="btn-secondary">Очистить журнал ошибок</button>
+          <span id="error-count" class="muted"></span>
+        </div>
+      </div>
+    </section>
+
   </main>
 
-  <script>
-    // Standard Google Universal Analytics code
-    (function (i, s, o, g, r, a, m) {
-      i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
-        (i[r].q = i[r].q || []).push(arguments)
-      },
-        i[r].l = 1 * new Date(); a = s.createElement(o),
-          m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
-      // Note: https protocol here
-    })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
-
-    ga('create', 'UA-144253676-3', 'auto');
-
-    // Removes failing protocol check. @see: http://stackoverflow.com/a/22152353/1958200
-    ga('set', 'checkProtocolTask', function () { });
-    ga('require', 'displayfeatures');
-    ga('send', 'pageview', '/desktop.html');
-  </script>
 </body>
-
 </html>

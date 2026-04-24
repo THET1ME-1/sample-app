@@ -1,29 +1,91 @@
-@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono&family=Roboto:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Roboto:wght@400;500;700&display=swap');
 
-*,
-*:before,
-*:after {
-  font-size: inherit;
-  font-family: inherit;
-  font-weight: inherit;
-  font-style: inherit;
-}
-
-body {
-  font-family: "Roboto", sans-serif;
-}
-
-h1,
-h2 {
+*, *:before, *:after {
+  box-sizing: border-box;
   margin: 0;
-  cursor: default;
+  padding: 0;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: inherit;
 }
+
+:root {
+  --bg-deep:    #0a1628;
+  --bg-card:    #122040;
+  --bg-panel:   #0d1e36;
+  --accent:     #00c8e0;
+  --accent-dim: #008ca0;
+  --orange:     #f77f00;
+  --green:      #00e5a0;
+  --red:        #ff4757;
+  --text:       #dce8f5;
+  --text-muted: #8ba5c9;
+  --tank-color: #3b9eff;
+  --dps-color:  #ff6b81;
+  --supp-color: #ffd32a;
+  --radius:     6px;
+  --header-h:   40px;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  font-family: 'Roboto', sans-serif;
+  font-size: 13px;
+  color: var(--text);
+  background: var(--bg-deep);
+  cursor: default;
+  user-select: none;
+}
+
+h1, h2, h3 { margin: 0; }
 
 button {
   padding: 0;
   border: none;
+  cursor: pointer;
+  background: none;
+}
+button:focus { outline: none; }
+
+.muted { color: var(--text-muted); }
+
+.section-title {
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 16px 0 8px;
 }
 
-button:focus {
-  outline: none;
+/* Role colours */
+.tank  { color: var(--tank-color); }
+.dps   { color: var(--dps-color); }
+.supp  { color: var(--supp-color); }
+
+.role-badge {
+  display: inline-block;
+  padding: 1px 6px;
+  border-radius: 3px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
 }
+.role-badge.tank { background: rgba(59,158,255,.2); color: var(--tank-color); }
+.role-badge.dps  { background: rgba(255,107,129,.2); color: var(--dps-color); }
+.role-badge.supp { background: rgba(255,211,42,.18); color: var(--supp-color); }
+
+.btn-secondary {
+  padding: 6px 14px;
+  border-radius: var(--radius);
+  background: var(--bg-card);
+  border: 1px solid var(--accent-dim);
+  color: var(--accent);
+  font-size: 12px;
+  transition: background .15s;
+}
+.btn-secondary:hover { background: var(--accent-dim); color: #fff; }
