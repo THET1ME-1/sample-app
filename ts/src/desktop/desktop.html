@@ -9,7 +9,6 @@
 </head>
 <body class="desktop">
 
-  <!-- ── Title bar (draggable) ─────────────────────────────────────── -->
   <div id="header" class="title-bar">
     <span class="title-bar-text">VisionWatch</span>
     <div class="window-controls-group">
@@ -19,10 +18,8 @@
     </div>
   </div>
 
-  <!-- ── App layout ────────────────────────────────────────────────── -->
   <div class="app-layout">
 
-    <!-- ── Sidebar ───────────────────────────────────────────────── -->
     <aside class="sidebar">
       <div class="sidebar-logo">
         <span class="logo-eye">👁</span>
@@ -66,10 +63,8 @@
       </div>
     </aside>
 
-    <!-- ── Main content ───────────────────────────────────────────── -->
     <main>
 
-      <!-- ── Profile Tab ──────────────────────────────────────────── -->
       <section id="tab-profile" class="tab-content active">
         <div class="profile-hero">
           <div class="profile-avatar">
@@ -106,7 +101,6 @@
         </div>
       </section>
 
-      <!-- ── Statistics Tab ───────────────────────────────────────── -->
       <section id="tab-stats" class="tab-content">
         <div class="section-title">Статистика по героям</div>
         <div id="hero-stats-table" class="hero-stats-table">
@@ -120,12 +114,10 @@
           </div>
           <div id="hero-stats-rows"></div>
         </div>
-
         <div class="section-title" style="margin-top:24px">Последние матчи</div>
         <div id="recent-matches" class="match-list"></div>
       </section>
 
-      <!-- ── Hero Guide Tab ───────────────────────────────────────── -->
       <section id="tab-heroes" class="tab-content">
         <div class="role-filter">
           <button class="role-btn active" data-role="all">Все</button>
@@ -136,7 +128,6 @@
         <div id="hero-guide-grid" class="hero-guide-grid"></div>
       </section>
 
-      <!-- ── How To Use Tab ───────────────────────────────────────── -->
       <section id="tab-guide" class="tab-content">
         <div class="guide-content">
           <h2>📋 Как пользоваться VisionWatch</h2>
@@ -187,150 +178,6 @@
 
     </main>
   </div>
-
-</body>
-</html>
-
-
-  <!-- ── Header ────────────────────────────────────────────────────────── -->
-  <header id="header" class="app-header">
-    <div class="app-logo">
-      <span class="logo-icon">👁</span>
-      <span class="logo-text">VisionWatch</span>
-    </div>
-    <nav class="tab-nav">
-      <button class="tab-btn active" data-tab="profile">Профиль</button>
-      <button class="tab-btn" data-tab="stats">Статистика</button>
-      <button class="tab-btn" data-tab="heroes">Гайды</button>
-      <button class="tab-btn" data-tab="guide">Как пользоваться</button>
-    </nav>
-    <div class="window-controls-group">
-      <button id="minimizeButton" class="window-control window-control-minimize"></button>
-      <button id="maximizeButton" class="window-control window-control-maximize"></button>
-      <button id="closeButton"    class="window-control window-control-close"></button>
-    </div>
-  </header>
-
-  <!-- ── Content ───────────────────────────────────────────────────────── -->
-  <main>
-
-    <!-- ── Profile Tab ─────────────────────────────────────────────────── -->
-    <section id="tab-profile" class="tab-content active">
-      <div class="profile-hero">
-        <div class="profile-avatar">
-          <span id="profile-initials">?</span>
-        </div>
-        <div class="profile-info">
-          <h2 id="profile-btag">Battle.NET tag появится после запуска игры</h2>
-          <p id="profile-subtitle" class="muted">Запусти Overwatch, чтобы увидеть данные профиля</p>
-        </div>
-      </div>
-
-      <div class="stat-cards">
-        <div class="stat-card">
-          <div class="stat-value" id="stat-total">0</div>
-          <div class="stat-label">Матчей сыграно</div>
-        </div>
-        <div class="stat-card win">
-          <div class="stat-value" id="stat-wins">0</div>
-          <div class="stat-label">Победы</div>
-        </div>
-        <div class="stat-card loss">
-          <div class="stat-value" id="stat-losses">0</div>
-          <div class="stat-label">Поражения</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-value" id="stat-winrate">—</div>
-          <div class="stat-label">Процент побед</div>
-        </div>
-      </div>
-
-      <div class="section-title">Любимые герои</div>
-      <div id="top-heroes-list" class="hero-chips-list">
-        <span class="muted">Нет данных — сыграй несколько матчей</span>
-      </div>
-    </section>
-
-    <!-- ── Statistics Tab ──────────────────────────────────────────────── -->
-    <section id="tab-stats" class="tab-content">
-      <div class="section-title">Статистика по героям</div>
-      <div id="hero-stats-table" class="hero-stats-table">
-        <div class="table-header">
-          <span>Герой</span>
-          <span>Матчей</span>
-          <span>Роль</span>
-          <span>Победы</span>
-          <span>% побед</span>
-          <span>K/D</span>
-        </div>
-        <div id="hero-stats-rows"></div>
-      </div>
-
-      <div class="section-title" style="margin-top:24px">Последние матчи</div>
-      <div id="recent-matches" class="match-list"></div>
-    </section>
-
-    <!-- ── Hero Guide Tab ──────────────────────────────────────────────── -->
-    <section id="tab-heroes" class="tab-content">
-      <div class="role-filter">
-        <button class="role-btn active" data-role="all">Все</button>
-        <button class="role-btn tank" data-role="Tank">Танки</button>
-        <button class="role-btn dps"  data-role="DPS">ДПС</button>
-        <button class="role-btn supp" data-role="Support">Хилеры</button>
-      </div>
-      <div id="hero-guide-grid" class="hero-guide-grid"></div>
-    </section>
-
-    <!-- ── How To Use Tab ──────────────────────────────────────────────── -->
-    <section id="tab-guide" class="tab-content">
-      <div class="guide-content">
-        <h2>📋 Как пользоваться VisionWatch</h2>
-
-        <div class="guide-section">
-          <h3>🚀 Запуск</h3>
-          <p>VisionWatch запускается автоматически при старте Overwatch. Лаунчер открывается сам, когда игры нет. Оверлей появляется в игре.</p>
-        </div>
-
-        <div class="guide-section">
-          <h3>🎮 Оверлей в игре</h3>
-          <ul>
-            <li><strong>Ctrl+Shift+Z</strong> — показать / скрыть оверлей</li>
-            <li>Оверлей показывает карту, состав команд, рекомендации</li>
-            <li>Цвет ника игрока <span style="color:#00e5a0">зелёный</span> — союзник, <span style="color:#ff6b6b">красный</span> — враг</li>
-            <li>Значок <strong>★</strong> рядом с игроком — ты уже встречал его в прошлых матчах</li>
-          </ul>
-        </div>
-
-        <div class="guide-section">
-          <h3>🗺️ Рекомендации по карте</h3>
-          <p>Оверлей автоматически показывает 5 лучших героев для текущей карты. Список составлен на основе метаигры и общих закономерностей.</p>
-        </div>
-
-        <div class="guide-section">
-          <h3>🔄 Контрпики</h3>
-          <p>Приложение анализирует состав вражеской команды и предлагает героев, которые являются контрпиками против их выбора. Предложения обновляются при смене героев врагами.</p>
-        </div>
-
-        <div class="guide-section">
-          <h3>📊 Статистика</h3>
-          <p>Все матчи сохраняются локально. На вкладке <strong>Статистика</strong> ты можешь видеть данные по каждому герою, историю матчей с результатами и процент побед.</p>
-        </div>
-
-        <div class="guide-section">
-          <h3>🧭 Гайды по героям</h3>
-          <p>На вкладке <strong>Гайды</strong> находится информация о каждом герое: роль, сложность, против кого он силён, и кто является его контрпиком. Используй фильтр по ролям.</p>
-        </div>
-
-        <div class="guide-section error-section">
-          <h3>🐛 Баги и ошибки</h3>
-          <p>Приложение автоматически сохраняет все ошибки в локальный журнал. Если что-то работает не так — проверь консоль (<strong>Ctrl+Shift+I</strong>) или пришли лог разработчику.</p>
-          <button id="clear-errors-btn" class="btn-secondary">Очистить журнал ошибок</button>
-          <span id="error-count" class="muted"></span>
-        </div>
-      </div>
-    </section>
-
-  </main>
 
 </body>
 </html>
